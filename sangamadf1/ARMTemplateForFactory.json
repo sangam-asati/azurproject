@@ -382,8 +382,7 @@
 											"path": "[['rating']"
 										},
 										"sink": {
-											"name": "products'][0]['rating",
-											"type": "Double"
+											"name": "rating"
 										}
 									},
 									{
