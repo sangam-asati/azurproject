@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_source_path'"
 		},
+		"ls_rest_api_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dummyjson.com/products"
+		},
 		"ls_sink_path_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sangamsc.dfs.core.windows.net/"
@@ -55,6 +59,9 @@
 					},
 					"ls_source_path_accountKey": {
 						"value": "[parameters('ls_source_path_accountKey')]"
+					},
+					"ls_rest_api_properties_typeProperties_url": {
+						"value": "[parameters('ls_rest_api_properties_typeProperties_url')]"
 					},
 					"ls_sink_path_properties_typeProperties_url": {
 						"value": "[parameters('ls_sink_path_properties_typeProperties_url')]"

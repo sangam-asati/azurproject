@@ -11,6 +11,9 @@
 		"ls_source_path_accountKey": {
 			"value": ""
 		},
+		"ls_rest_api_properties_typeProperties_url": {
+			"value": "https://dummyjson.com/products"
+		},
 		"ls_sink_path_properties_typeProperties_url": {
 			"value": "https://sangamsc.dfs.core.windows.net/"
 		},
