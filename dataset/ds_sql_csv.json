@@ -1,0 +1,16 @@
+{
+	"name": "ds_sql_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "azur_sql",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "officedata"
+		}
+	}
+}
