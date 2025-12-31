@@ -11,6 +11,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_sink_path'"
 		},
+		"ls_sink_sql_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sink_sql'"
+		},
+		"ls_sink_sql_new_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sink_sql_new'"
+		},
 		"ls_source_path_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_source_path'"
@@ -22,6 +30,30 @@
 		"ls_sink_path_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sangamsc.dfs.core.windows.net/"
+		},
+		"ls_sink_sql_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sangamsqlser.database.windows.net"
+		},
+		"ls_sink_sql_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sangamDB"
+		},
+		"ls_sink_sql_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
+		},
+		"ls_sink_sql_new_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sangamsqlser.database.windows.net"
+		},
+		"ls_sink_sql_new_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sangamDB"
+		},
+		"ls_sink_sql_new_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
 		},
 		"ls_source_path_properties_typeProperties_url": {
 			"type": "string",
@@ -57,6 +89,12 @@
 					"ls_sink_path_accountKey": {
 						"value": "[parameters('ls_sink_path_accountKey')]"
 					},
+					"ls_sink_sql_password": {
+						"value": "[parameters('ls_sink_sql_password')]"
+					},
+					"ls_sink_sql_new_password": {
+						"value": "[parameters('ls_sink_sql_new_password')]"
+					},
 					"ls_source_path_accountKey": {
 						"value": "[parameters('ls_source_path_accountKey')]"
 					},
@@ -65,6 +103,24 @@
 					},
 					"ls_sink_path_properties_typeProperties_url": {
 						"value": "[parameters('ls_sink_path_properties_typeProperties_url')]"
+					},
+					"ls_sink_sql_properties_typeProperties_server": {
+						"value": "[parameters('ls_sink_sql_properties_typeProperties_server')]"
+					},
+					"ls_sink_sql_properties_typeProperties_database": {
+						"value": "[parameters('ls_sink_sql_properties_typeProperties_database')]"
+					},
+					"ls_sink_sql_properties_typeProperties_userName": {
+						"value": "[parameters('ls_sink_sql_properties_typeProperties_userName')]"
+					},
+					"ls_sink_sql_new_properties_typeProperties_server": {
+						"value": "[parameters('ls_sink_sql_new_properties_typeProperties_server')]"
+					},
+					"ls_sink_sql_new_properties_typeProperties_database": {
+						"value": "[parameters('ls_sink_sql_new_properties_typeProperties_database')]"
+					},
+					"ls_sink_sql_new_properties_typeProperties_userName": {
+						"value": "[parameters('ls_sink_sql_new_properties_typeProperties_userName')]"
 					},
 					"ls_source_path_properties_typeProperties_url": {
 						"value": "[parameters('ls_source_path_properties_typeProperties_url')]"

@@ -11,6 +11,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_sink_path'"
 		},
+		"ls_sink_sql_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sink_sql'"
+		},
+		"ls_sink_sql_new_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sink_sql_new'"
+		},
 		"ls_source_path_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_source_path'"
@@ -22,6 +30,30 @@
 		"ls_sink_path_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sangamsc.dfs.core.windows.net/"
+		},
+		"ls_sink_sql_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sangamsqlser.database.windows.net"
+		},
+		"ls_sink_sql_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sangamDB"
+		},
+		"ls_sink_sql_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
+		},
+		"ls_sink_sql_new_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sangamsqlser.database.windows.net"
+		},
+		"ls_sink_sql_new_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sangamDB"
+		},
+		"ls_sink_sql_new_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
 		},
 		"ls_source_path_properties_typeProperties_url": {
 			"type": "string",
@@ -59,6 +91,50 @@
 					"accountKey": {
 						"type": "SecureString",
 						"value": "[parameters('ls_sink_path_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_sink_sql')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('ls_sink_sql_properties_typeProperties_server')]",
+					"database": "[parameters('ls_sink_sql_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('ls_sink_sql_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_sink_sql_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_sink_sql_new')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('ls_sink_sql_new_properties_typeProperties_server')]",
+					"database": "[parameters('ls_sink_sql_new_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('ls_sink_sql_new_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_sink_sql_new_password')]"
 					}
 				}
 			},
@@ -143,6 +219,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "product.json",
 						"fileSystem": "sink"
 					}
 				},
@@ -177,6 +254,27 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ls_sink_path')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_sink_sql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_sink_sql_new",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "product"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_sink_sql_new')]"
 			]
 		},
 		{
@@ -528,6 +626,156 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ds_source_restapi')]",
 				"[concat(variables('factoryId'), '/datasets/ds_sink_jason')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/_005_CopyRestAPI_SQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyDataWebToSQL",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "[['id']"
+										},
+										"sink": {
+											"name": "id",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"path": "[['title']"
+										},
+										"sink": {
+											"name": "title",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['description']"
+										},
+										"sink": {
+											"name": "description",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['category']"
+										},
+										"sink": {
+											"name": "category",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['price']"
+										},
+										"sink": {
+											"name": "price",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"path": "[['discountPercentage']"
+										},
+										"sink": {
+											"name": "discountPercentage",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"path": "[['rating']"
+										},
+										"sink": {
+											"name": "products'][0]['rating",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"path": "[['stock']"
+										},
+										"sink": {
+											"name": "stock",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"path": "[['brand']"
+										},
+										"sink": {
+											"name": "brand",
+											"type": "String"
+										}
+									}
+								],
+								"collectionReference": "$['products']"
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_source_restapi",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_sink_sql",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_source_restapi')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sink_sql')]"
 			]
 		}
 	]
