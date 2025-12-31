@@ -1,0 +1,18 @@
+{
+	"name": "ds_sink_jason",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sink_path",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "sink"
+			}
+		},
+		"schema": {}
+	}
+}
