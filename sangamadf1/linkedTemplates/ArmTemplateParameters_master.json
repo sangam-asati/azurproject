@@ -5,6 +5,15 @@
 		"factoryName": {
 			"value": "sangamadf1"
 		},
+		"azur_sql_password": {
+			"value": ""
+		},
+		"datalake_accountKey": {
+			"value": ""
+		},
+		"ls_json_source_adls_accountKey": {
+			"value": ""
+		},
 		"ls_sink_path_accountKey": {
 			"value": ""
 		},
@@ -16,6 +25,21 @@
 		},
 		"ls_source_path_accountKey": {
 			"value": ""
+		},
+		"azur_sql_properties_typeProperties_server": {
+			"value": "sangamsqlser.database.windows.net"
+		},
+		"azur_sql_properties_typeProperties_database": {
+			"value": "sangamDB"
+		},
+		"azur_sql_properties_typeProperties_userName": {
+			"value": "sqladmin"
+		},
+		"datalake_properties_typeProperties_url": {
+			"value": "https://sangamsc.dfs.core.windows.net/"
+		},
+		"ls_json_source_adls_properties_typeProperties_url": {
+			"value": "https://sangamsc.dfs.core.windows.net/"
 		},
 		"ls_rest_api_properties_typeProperties_url": {
 			"value": "https://dummyjson.com/products"

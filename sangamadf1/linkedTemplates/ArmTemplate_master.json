@@ -7,6 +7,18 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "sangamadf1"
 		},
+		"azur_sql_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'azur_sql'"
+		},
+		"datalake_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'datalake'"
+		},
+		"ls_json_source_adls_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_json_source_adls'"
+		},
 		"ls_sink_path_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_sink_path'"
@@ -22,6 +34,26 @@
 		"ls_source_path_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_source_path'"
+		},
+		"azur_sql_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sangamsqlser.database.windows.net"
+		},
+		"azur_sql_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sangamDB"
+		},
+		"azur_sql_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
+		},
+		"datalake_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sangamsc.dfs.core.windows.net/"
+		},
+		"ls_json_source_adls_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sangamsc.dfs.core.windows.net/"
 		},
 		"ls_rest_api_properties_typeProperties_url": {
 			"type": "string",
@@ -86,6 +118,15 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"azur_sql_password": {
+						"value": "[parameters('azur_sql_password')]"
+					},
+					"datalake_accountKey": {
+						"value": "[parameters('datalake_accountKey')]"
+					},
+					"ls_json_source_adls_accountKey": {
+						"value": "[parameters('ls_json_source_adls_accountKey')]"
+					},
 					"ls_sink_path_accountKey": {
 						"value": "[parameters('ls_sink_path_accountKey')]"
 					},
@@ -97,6 +138,21 @@
 					},
 					"ls_source_path_accountKey": {
 						"value": "[parameters('ls_source_path_accountKey')]"
+					},
+					"azur_sql_properties_typeProperties_server": {
+						"value": "[parameters('azur_sql_properties_typeProperties_server')]"
+					},
+					"azur_sql_properties_typeProperties_database": {
+						"value": "[parameters('azur_sql_properties_typeProperties_database')]"
+					},
+					"azur_sql_properties_typeProperties_userName": {
+						"value": "[parameters('azur_sql_properties_typeProperties_userName')]"
+					},
+					"datalake_properties_typeProperties_url": {
+						"value": "[parameters('datalake_properties_typeProperties_url')]"
+					},
+					"ls_json_source_adls_properties_typeProperties_url": {
+						"value": "[parameters('ls_json_source_adls_properties_typeProperties_url')]"
 					},
 					"ls_rest_api_properties_typeProperties_url": {
 						"value": "[parameters('ls_rest_api_properties_typeProperties_url')]"
@@ -128,6 +184,26 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "sangamadf1_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'sangamadf1_ArmTemplate_0')]"
+			]
 		}
 	]
 }
