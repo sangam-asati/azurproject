@@ -19,9 +19,9 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_json_source_adls'"
 		},
-		"ls_sink_path_accountKey": {
+		"ls_sink_csv_accountKey": {
 			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'ls_sink_path'"
+			"metadata": "Secure string for 'accountKey' of 'ls_sink_csv'"
 		},
 		"ls_sink_sql_password": {
 			"type": "secureString",
@@ -30,6 +30,10 @@
 		"ls_sink_sql_new_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ls_sink_sql_new'"
+		},
+		"ls_snowflake_source_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_snowflake_source'"
 		},
 		"ls_source_path_accountKey": {
 			"type": "secureString",
@@ -59,9 +63,17 @@
 			"type": "string",
 			"defaultValue": "https://dummyjson.com/products"
 		},
-		"ls_sink_path_properties_typeProperties_url": {
+		"ls_sink_csv_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://sangamsc.dfs.core.windows.net/"
+		},
+		"ls_sink_deli_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'ls_sink_deli'"
+		},
+		"ls_sink_path_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'ls_sink_path'"
 		},
 		"ls_sink_sql_properties_typeProperties_server": {
 			"type": "string",
@@ -86,6 +98,14 @@
 		"ls_sink_sql_new_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "sqladmin"
+		},
+		"ls_snoflake_sink_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'ls_snoflake_sink'"
+		},
+		"ls_snowflake_source_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "SNOWFLAKE_PRACTICEDB"
 		},
 		"ls_source_path_properties_typeProperties_url": {
 			"type": "string",
@@ -127,14 +147,17 @@
 					"ls_json_source_adls_accountKey": {
 						"value": "[parameters('ls_json_source_adls_accountKey')]"
 					},
-					"ls_sink_path_accountKey": {
-						"value": "[parameters('ls_sink_path_accountKey')]"
+					"ls_sink_csv_accountKey": {
+						"value": "[parameters('ls_sink_csv_accountKey')]"
 					},
 					"ls_sink_sql_password": {
 						"value": "[parameters('ls_sink_sql_password')]"
 					},
 					"ls_sink_sql_new_password": {
 						"value": "[parameters('ls_sink_sql_new_password')]"
+					},
+					"ls_snowflake_source_password": {
+						"value": "[parameters('ls_snowflake_source_password')]"
 					},
 					"ls_source_path_accountKey": {
 						"value": "[parameters('ls_source_path_accountKey')]"
@@ -157,8 +180,14 @@
 					"ls_rest_api_properties_typeProperties_url": {
 						"value": "[parameters('ls_rest_api_properties_typeProperties_url')]"
 					},
-					"ls_sink_path_properties_typeProperties_url": {
-						"value": "[parameters('ls_sink_path_properties_typeProperties_url')]"
+					"ls_sink_csv_properties_typeProperties_url": {
+						"value": "[parameters('ls_sink_csv_properties_typeProperties_url')]"
+					},
+					"ls_sink_deli_sasUri": {
+						"value": "[parameters('ls_sink_deli_sasUri')]"
+					},
+					"ls_sink_path_sasUri": {
+						"value": "[parameters('ls_sink_path_sasUri')]"
 					},
 					"ls_sink_sql_properties_typeProperties_server": {
 						"value": "[parameters('ls_sink_sql_properties_typeProperties_server')]"
@@ -177,6 +206,12 @@
 					},
 					"ls_sink_sql_new_properties_typeProperties_userName": {
 						"value": "[parameters('ls_sink_sql_new_properties_typeProperties_userName')]"
+					},
+					"ls_snoflake_sink_sasUri": {
+						"value": "[parameters('ls_snoflake_sink_sasUri')]"
+					},
+					"ls_snowflake_source_properties_typeProperties_database": {
+						"value": "[parameters('ls_snowflake_source_properties_typeProperties_database')]"
 					},
 					"ls_source_path_properties_typeProperties_url": {
 						"value": "[parameters('ls_source_path_properties_typeProperties_url')]"
