@@ -1,0 +1,16 @@
+{
+	"name": "ds_snowflake_source",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_snowflake_source",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SnowflakeV2Table",
+		"schema": [],
+		"typeProperties": {
+			"schema": "PUBLIC",
+			"table": "OFFICEDATA"
+		}
+	}
+}
