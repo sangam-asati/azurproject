@@ -23,6 +23,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_sink_csv'"
 		},
+		"ls_sink_snowflake_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sink_snowflake'"
+		},
 		"ls_sink_sql_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ls_sink_sql'"
@@ -75,6 +79,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'sasUri' of 'ls_sink_path'"
 		},
+		"ls_sink_snowflake_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "SNOWFLAKE_PRACTICEDB"
+		},
 		"ls_sink_sql_properties_typeProperties_server": {
 			"type": "string",
 			"defaultValue": "sangamsqlser.database.windows.net"
@@ -106,6 +114,10 @@
 		"ls_snowflake_source_properties_typeProperties_database": {
 			"type": "string",
 			"defaultValue": "SNOWFLAKE_PRACTICEDB"
+		},
+		"ls_source_csv_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'ls_source_csv'"
 		},
 		"ls_source_path_properties_typeProperties_url": {
 			"type": "string",
@@ -921,6 +933,70 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ds_snowflake_source')]",
 				"[concat(variables('factoryId'), '/datasets/ds_snowflake_sink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/_009_pl_Adls_snowflake')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SnowflakeV2Sink",
+								"importSettings": {
+									"type": "SnowflakeImportCopyCommand"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_source_csv",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_sink_snowflake",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_source_csv')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sink_snowflake')]"
 			]
 		},
 		{
@@ -2009,6 +2085,27 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ds_sink_snowflake')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_sink_snowflake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SnowflakeV2Table",
+				"schema": [],
+				"typeProperties": {
+					"schema": "PUBLIC",
+					"table": "PRODUCT"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_sink_snowflake')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ds_sink_sql')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2133,6 +2230,35 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ls_source_path')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_source_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_source_csv",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "products.csv",
+						"container": "source"
+					},
+					"columnDelimiter": ",",
+					"rowDelimiter": "\r",
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_source_csv')]"
 			]
 		},
 		{
@@ -2398,6 +2524,29 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ls_sink_snowflake')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SnowflakeV2",
+				"typeProperties": {
+					"authenticationType": "Basic",
+					"accountIdentifier": "MHAOHCN-EU12692",
+					"user": "SANGAMASATI",
+					"database": "[parameters('ls_sink_snowflake_properties_typeProperties_database')]",
+					"warehouse": "COMPUTE_WH",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_sink_snowflake_password')]"
+					},
+					"useUtcTimestamps": false
+				},
+				"version": "1.1"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ls_sink_sql')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -2474,6 +2623,19 @@
 					"useUtcTimestamps": false
 				},
 				"version": "1.1"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_source_csv')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"sasUri": "[parameters('ls_source_csv_sasUri')]"
+				}
 			},
 			"dependsOn": []
 		},

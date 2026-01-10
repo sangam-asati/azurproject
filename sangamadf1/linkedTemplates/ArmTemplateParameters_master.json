@@ -17,6 +17,9 @@
 		"ls_sink_csv_accountKey": {
 			"value": ""
 		},
+		"ls_sink_snowflake_password": {
+			"value": ""
+		},
 		"ls_sink_sql_password": {
 			"value": ""
 		},
@@ -56,6 +59,9 @@
 		"ls_sink_path_sasUri": {
 			"value": ""
 		},
+		"ls_sink_snowflake_properties_typeProperties_database": {
+			"value": "SNOWFLAKE_PRACTICEDB"
+		},
 		"ls_sink_sql_properties_typeProperties_server": {
 			"value": "sangamsqlser.database.windows.net"
 		},
@@ -79,6 +85,9 @@
 		},
 		"ls_snowflake_source_properties_typeProperties_database": {
 			"value": "SNOWFLAKE_PRACTICEDB"
+		},
+		"ls_source_csv_sasUri": {
+			"value": ""
 		},
 		"ls_source_path_properties_typeProperties_url": {
 			"value": "https://sangamsc.dfs.core.windows.net/"

@@ -23,6 +23,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_sink_csv'"
 		},
+		"ls_sink_snowflake_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sink_snowflake'"
+		},
 		"ls_sink_sql_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ls_sink_sql'"
@@ -75,6 +79,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'sasUri' of 'ls_sink_path'"
 		},
+		"ls_sink_snowflake_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "SNOWFLAKE_PRACTICEDB"
+		},
 		"ls_sink_sql_properties_typeProperties_server": {
 			"type": "string",
 			"defaultValue": "sangamsqlser.database.windows.net"
@@ -106,6 +114,10 @@
 		"ls_snowflake_source_properties_typeProperties_database": {
 			"type": "string",
 			"defaultValue": "SNOWFLAKE_PRACTICEDB"
+		},
+		"ls_source_csv_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'ls_source_csv'"
 		},
 		"ls_source_path_properties_typeProperties_url": {
 			"type": "string",
@@ -231,6 +243,29 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ls_sink_snowflake')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SnowflakeV2",
+				"typeProperties": {
+					"authenticationType": "Basic",
+					"accountIdentifier": "MHAOHCN-EU12692",
+					"user": "SANGAMASATI",
+					"database": "[parameters('ls_sink_snowflake_properties_typeProperties_database')]",
+					"warehouse": "COMPUTE_WH",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_sink_snowflake_password')]"
+					},
+					"useUtcTimestamps": false
+				},
+				"version": "1.1"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ls_sink_sql')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -307,6 +342,19 @@
 					"useUtcTimestamps": false
 				},
 				"version": "1.1"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_source_csv')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"sasUri": "[parameters('ls_source_csv_sasUri')]"
+				}
 			},
 			"dependsOn": []
 		},
@@ -630,57 +678,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ls_sink_deli')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_sink_jason')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_sink_path",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "product.json",
-						"fileSystem": "sink"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_sink_path')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_sink_path')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_sink_path",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileSystem": "sink"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_sink_path')]"
 			]
 		}
 	]
