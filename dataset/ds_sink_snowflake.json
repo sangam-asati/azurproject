@@ -1,0 +1,16 @@
+{
+	"name": "ds_sink_snowflake",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sink_snowflake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SnowflakeV2Table",
+		"schema": [],
+		"typeProperties": {
+			"schema": "PUBLIC",
+			"table": "PRODUCT"
+		}
+	}
+}
