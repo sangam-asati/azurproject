@@ -11,9 +11,6 @@
 			},
 			"filename": {
 				"type": "string"
-			},
-			"fileformat": {
-				"type": "string"
 			}
 		},
 		"annotations": [],
@@ -21,7 +18,14 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "DimArtist.json",
+				"fileName": {
+					"value": "@dataset().filename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().sink_direct",
+					"type": "Expression"
+				},
 				"container": "sink"
 			}
 		},
