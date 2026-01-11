@@ -1,0 +1,34 @@
+{
+	"name": "ds_sink_jason_1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"file_direc": {
+				"type": "string"
+			},
+			"filename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().filename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().file_direc",
+					"type": "Expression"
+				},
+				"fileSystem": "sink"
+			}
+		},
+		"schema": {}
+	}
+}
