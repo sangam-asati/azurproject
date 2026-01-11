@@ -5,13 +5,20 @@
 			"referenceName": "AzureBlobStorage1",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"sink_direct": {
+				"type": "string"
+			},
+			"filename": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "Json",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": "DimArtist.json",
-				"folderPath": "DimArtist",
 				"container": "sink"
 			}
 		},
