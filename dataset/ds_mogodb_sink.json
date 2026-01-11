@@ -11,6 +11,9 @@
 			},
 			"filename": {
 				"type": "string"
+			},
+			"fileformat": {
+				"type": "string"
 			}
 		},
 		"annotations": [],
