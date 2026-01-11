@@ -1,0 +1,20 @@
+{
+	"name": "ds_mogodb_sink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "DimArtist.json",
+				"folderPath": "DimArtist",
+				"container": "sink"
+			}
+		},
+		"schema": {}
+	}
+}
