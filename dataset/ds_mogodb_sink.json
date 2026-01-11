@@ -1,0 +1,34 @@
+{
+	"name": "ds_mogodb_sink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"sink_direct": {
+				"type": "string"
+			},
+			"filename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@{dataset().filename}.json",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().sink_direct",
+					"type": "Expression"
+				},
+				"container": "sink"
+			}
+		},
+		"schema": {}
+	}
+}
