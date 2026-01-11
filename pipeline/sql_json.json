@@ -1,120 +1,76 @@
 {
-	"name": "pipeline1",
+	"name": "sql_json",
 	"properties": {
 		"activities": [
 			{
-				"name": "ForEach1",
-				"type": "ForEach",
+				"name": "Copy data1",
+				"type": "Copy",
 				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
 				"userProperties": [],
 				"typeProperties": {
-					"items": {
-						"value": "@pipeline().parameters.loop_var",
-						"type": "Expression"
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
 					},
-					"isSequential": true,
-					"activities": [
-						{
-							"name": "Copy data1",
-							"type": "Copy",
-							"state": "Inactive",
-							"onInactiveMarkAs": "Succeeded",
-							"dependsOn": [],
-							"policy": {
-								"timeout": "0.12:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"typeProperties": {
-								"source": {
-									"type": "AzureSqlSource",
-									"queryTimeout": "02:00:00",
-									"partitionOption": "None"
-								},
-								"sink": {
-									"type": "JsonSink",
-									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings"
-									},
-									"formatSettings": {
-										"type": "JsonWriteSettings"
-									}
-								},
-								"enableStaging": false
-							},
-							"inputs": [
-								{
-									"referenceName": "ds_sql_source",
-									"type": "DatasetReference",
-									"parameters": {
-										"schema": {
-											"value": "@{item().schema}",
-											"type": "Expression"
-										},
-										"table": {
-											"value": "@{item().table}",
-											"type": "Expression"
-										}
-									}
-								}
-							],
-							"outputs": [
-								{
-									"referenceName": "ds_sink_jason_1",
-									"type": "DatasetReference",
-									"parameters": {
-										"file_direc": {
-											"value": "@{item().table}",
-											"type": "Expression"
-										},
-										"filename": {
-											"value": "@{item().tablename}.json",
-											"type": "Expression"
-										}
-									}
-								}
-							]
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
 						},
-						{
-							"name": "Wait1",
-							"type": "Wait",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"waitTimeInSeconds": 1
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_sql_source",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema": {
+								"value": "@{pipeline().parameters.schema}",
+								"type": "Expression"
+							},
+							"table": {
+								"value": "@{pipeline().parameters.table}",
+								"type": "Expression"
 							}
 						}
-					]
-				}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_sink_jason_1",
+						"type": "DatasetReference",
+						"parameters": {
+							"file_direc": {
+								"value": "@{pipeline().parameters.table}",
+								"type": "Expression"
+							},
+							"filename": {
+								"value": "@{pipeline().parameters.table}.json",
+								"type": "Expression"
+							}
+						}
+					}
+				]
 			}
 		],
 		"parameters": {
-			"loop_var": {
-				"type": "array",
-				"defaultValue": [
-					{
-						"schema": "dbo",
-						"table": "DimUser"
-					},
-					{
-						"schema": "dbo",
-						"table": "DimTrack"
-					},
-					{
-						"schema": "dbo",
-						"table": "DimDate"
-					},
-					{
-						"schema": "dbo",
-						"table": "DimArtist"
-					},
-					{
-						"schema": "dbo",
-						"table": "FactStream"
-					}
-				]
+			"schema": {
+				"type": "string"
+			},
+			"table": {
+				"type": "string"
 			}
 		},
 		"annotations": []
