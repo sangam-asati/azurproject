@@ -17,6 +17,8 @@
 						{
 							"name": "Copy data1",
 							"type": "Copy",
+							"state": "Inactive",
+							"onInactiveMarkAs": "Succeeded",
 							"dependsOn": [],
 							"policy": {
 								"timeout": "0.12:00:00",
@@ -74,6 +76,15 @@
 									}
 								}
 							]
+						},
+						{
+							"name": "Wait1",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 1
+							}
 						}
 					]
 				}
@@ -85,33 +96,23 @@
 				"defaultValue": [
 					{
 						"schema": "dbo",
-						"table": "DimUser",
-						"cdc_col": "updated_at",
-						"from_date": ""
+						"table": "DimUser"
 					},
 					{
 						"schema": "dbo",
-						"table": "DimTrack",
-						"cdc_col": "updated_at",
-						"from_date": ""
+						"table": "DimTrack"
 					},
 					{
 						"schema": "dbo",
-						"table": "DimDate",
-						"cdc_col": "date",
-						"from_date": ""
+						"table": "DimDate"
 					},
 					{
 						"schema": "dbo",
-						"table": "DimArtist",
-						"cdc_col": "updated_at",
-						"from_date": ""
+						"table": "DimArtist"
 					},
 					{
 						"schema": "dbo",
-						"table": "FactStream",
-						"cdc_col": "stream_timestamp",
-						"from_date": ""
+						"table": "FactStream"
 					}
 				]
 			}
