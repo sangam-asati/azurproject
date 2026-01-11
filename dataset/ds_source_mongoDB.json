@@ -5,11 +5,19 @@
 			"referenceName": "ls_mongodb",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"collectionName": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "MongoDbV2Collection",
 		"schema": [],
 		"typeProperties": {
-			"collection": "DimArtist"
+			"collection": {
+				"value": "@dataset().collectionName",
+				"type": "Expression"
+			}
 		}
 	}
 }
