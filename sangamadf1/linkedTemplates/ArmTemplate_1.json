@@ -13,6 +13,57 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/ds_sink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_sink_path",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "sink"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_sink_deli')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_sink_deli",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "sink"
+					},
+					"columnDelimiter": ",",
+					"rowDelimiter": "\r",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ds_sink_jason')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -27,6 +78,43 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"fileName": "product.json",
+						"fileSystem": "sink"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_sink_jason_1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"file_direc": {
+						"type": "string"
+					},
+					"filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@{dataset().filename}",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@{dataset().file_direc}",
+							"type": "Expression"
+						},
 						"fileSystem": "sink"
 					}
 				},
@@ -296,6 +384,39 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ds_source_sql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"schema": {
+						"type": "string"
+					},
+					"table": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ds_sql_csv')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -310,6 +431,39 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "officedata"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_sql_source')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"schema": {
+						"type": "string"
+					},
+					"table": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@{dataset().schema}",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@{dataset().table}",
+						"type": "Expression"
+					}
 				}
 			},
 			"dependsOn": []
@@ -515,7 +669,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_source')]"
+				"[concat(variables('factoryId'), '/datasets/ds_source')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sink')]"
 			]
 		},
 		{
@@ -581,654 +736,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ds_source_restapi')]",
 				"[concat(variables('factoryId'), '/datasets/ds_sink_jason')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/_005_CopyRestAPI_SQL')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "CopyDataWebToSQL",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET",
-								"paginationRules": {
-									"supportRFC5988": "true"
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"writeBehavior": "insert",
-								"sqlWriterUseTableLock": false,
-								"tableOption": "autoCreate",
-								"disableMetricsCollection": false
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"path": "[['id']"
-										},
-										"sink": {
-											"name": "id",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"path": "[['title']"
-										},
-										"sink": {
-											"name": "title",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "[['description']"
-										},
-										"sink": {
-											"name": "description",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "[['category']"
-										},
-										"sink": {
-											"name": "category",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "[['price']"
-										},
-										"sink": {
-											"name": "price",
-											"type": "Double"
-										}
-									},
-									{
-										"source": {
-											"path": "[['discountPercentage']"
-										},
-										"sink": {
-											"name": "discountPercentage",
-											"type": "Double"
-										}
-									},
-									{
-										"source": {
-											"path": "[['rating']"
-										},
-										"sink": {
-											"name": "rating"
-										}
-									},
-									{
-										"source": {
-											"path": "[['stock']"
-										},
-										"sink": {
-											"name": "stock",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"path": "[['brand']"
-										},
-										"sink": {
-											"name": "brand",
-											"type": "String"
-										}
-									}
-								],
-								"collectionReference": "$['products']"
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "ds_source_restapi",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ds_sink_sql",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_source_restapi')]",
-				"[concat(variables('factoryId'), '/datasets/ds_sink_sql')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/_006_Copy_Json_ADLS_To_SQL')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "CopyJsonADLSToSQL",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "JsonSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "JsonReadSettings"
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"writeBehavior": "insert",
-								"sqlWriterUseTableLock": false,
-								"tableOption": "autoCreate",
-								"disableMetricsCollection": false
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"path": "[['id']"
-										},
-										"sink": {
-											"name": "id",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"path": "[['title']"
-										},
-										"sink": {
-											"name": "title",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "[['description']"
-										},
-										"sink": {
-											"name": "description",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "[['category']"
-										},
-										"sink": {
-											"name": "category",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "[['price']"
-										},
-										"sink": {
-											"name": "price",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"path": "[['discountPercentage']"
-										},
-										"sink": {
-											"name": "discountPercentage",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"path": "[['rating']"
-										},
-										"sink": {
-											"name": "rating",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"path": "[['stock']"
-										},
-										"sink": {
-											"name": "stock",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"path": "[['brand']"
-										},
-										"sink": {
-											"name": "brand",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "[['sku']"
-										},
-										"sink": {
-											"name": "sku",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "[['weight']"
-										},
-										"sink": {
-											"name": "weight",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"path": "[['warrantyInformation']"
-										},
-										"sink": {
-											"name": "warrantyInformation",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "[['shippingInformation']"
-										},
-										"sink": {
-											"name": "shippingInformation",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "[['availabilityStatus']"
-										},
-										"sink": {
-											"name": "availabilityStatus",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "[['returnPolicy']"
-										},
-										"sink": {
-											"name": "returnPolicy",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"path": "[['minimumOrderQuantity']"
-										},
-										"sink": {
-											"name": "minimumOrderQuantity",
-											"type": "Int64"
-										}
-									}
-								],
-								"collectionReference": "$['products']"
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "ds_json_adls",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ds_azur_sql",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/_007_Copy_CSV_To_SQL')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "CopyCSVToSQL",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"writeBehavior": "insert",
-								"sqlWriterUseTableLock": false,
-								"tableOption": "autoCreate",
-								"disableMetricsCollection": false
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "employee_id",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "employee_id",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "employee_name",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "employee_name",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "department",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "department",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "state",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "state",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "salary",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "salary",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "age",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "age",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "bonus",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "bonus",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "ds_source_path",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ds_sql_csv",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_source_path')]",
-				"[concat(variables('factoryId'), '/datasets/ds_sql_csv')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/_008_pl_snowflake_adls')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SnowflakeV2Source",
-								"exportSettings": {
-									"type": "SnowflakeExportCopyCommand"
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "ds_snowflake_source",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ds_snowflake_sink",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_snowflake_source')]",
-				"[concat(variables('factoryId'), '/datasets/ds_snowflake_sink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/_009_pl_Adls_snowflake')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "SnowflakeV2Sink",
-								"importSettings": {
-									"type": "SnowflakeImportCopyCommand"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "ds_source_csv",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ds_sink_snowflake",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_source_csv')]",
-				"[concat(variables('factoryId'), '/datasets/ds_sink_snowflake')]"
 			]
 		}
 	]

@@ -5,6 +5,12 @@
 		"factoryName": {
 			"value": "sangamadf1"
 		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"AzureSqlDatabase1_password": {
+			"value": ""
+		},
 		"azur_sql_password": {
 			"value": ""
 		},
@@ -31,6 +37,18 @@
 		},
 		"ls_source_path_accountKey": {
 			"value": ""
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://sangamsc.dfs.core.windows.net/"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"value": "sangamsqlser.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"value": "sangamDB"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"value": "sqladmin"
 		},
 		"azur_sql_properties_typeProperties_server": {
 			"value": "sangamsqlser.database.windows.net"
